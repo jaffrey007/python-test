@@ -1,0 +1,21 @@
+name: Test Aliyun OIDC
+on:
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  test-oidc:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # 必须
+      contents: read
+
+    steps:
+      - name: Configure Aliyun OIDC
+        uses: aliyun/aliyun-oidc-action@v1
+        with:
+          OIDCProviderArn: "acs:ram::1421183152632398:oidc-provider/github_actions"
+          RoleArn: "acs:ram::1421183152632398:role/github-actions-cicd"
+
+      # 验证是否成功获取 STS 并能调用阿里云
+      - name: Test aliyun cli get-current-user
+        run: aliyun sts GetCallerIdentity
